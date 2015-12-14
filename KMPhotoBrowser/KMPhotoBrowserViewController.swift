@@ -310,11 +310,7 @@ extension KMPhotoBrowserViewController: UIScrollViewDelegate {
     }
     
     func scrollViewDidEndZooming(scrollView: UIScrollView, withView view: UIView?, atScale scale: CGFloat) {
-        
-//        if scrollView.zoomScale <= 1 {
-//            let view = scrollView.viewWithTag(100 + self.currentIndex)
-//            view?.center = CGRectGetCenter(scrollView.bounds)
-//        }
+
     }
     
     func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
