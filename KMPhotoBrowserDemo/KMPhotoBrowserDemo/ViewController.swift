@@ -56,9 +56,10 @@ extension ViewController: KMPhotoBrowserViewDelegate {
         let vc = KMPhotoBrowserViewController()
         vc.imageURLs = self.imageURLs
         /* or vc.images = self.images */
-        
+        vc.clickForBack = true
         vc.delegate = self
         
+        vc.currentIndex = index
         self.presentViewController(vc, animated: true, completion: nil)
     }
 }

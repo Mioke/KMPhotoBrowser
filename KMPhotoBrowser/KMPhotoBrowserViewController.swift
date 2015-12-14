@@ -73,10 +73,10 @@ class KMPhotoBrowserViewController: UIViewController {
             
             self.view.addSubview(view)
             
-            //            let gesture = UITapGestureRecognizer(target: self, action: "handleClickAction")
-            //            view.addGestureRecognizer(gesture)
+//            let gesture = UITapGestureRecognizer(target: self, action: "handleClickAction")
+//            view.addGestureRecognizer(gesture)
             return view
-            }()
+        }()
         
         self.topBar = {
             let bar = UIView(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, 64))
@@ -128,10 +128,10 @@ class KMPhotoBrowserViewController: UIViewController {
                 bar.addSubview(label)
                 
                 return label
-                }()
+            }()
             
             return bar
-            }()
+        }()
         self.currentIndex = Int(self.currentIndex)
         
         self.loadContent()
@@ -141,7 +141,7 @@ class KMPhotoBrowserViewController: UIViewController {
         super.viewWillAppear(animated)
         
         if self.clickForBack {
-            let tap = UITapGestureRecognizer(target: self, action: "popView")
+            let tap = UITapGestureRecognizer(target: self, action: "back")
             self.scrollView?.addGestureRecognizer(tap)
         }
     }
@@ -185,12 +185,19 @@ class KMPhotoBrowserViewController: UIViewController {
         }
         else if self.imageURLs != nil {
             
-            for url in self.imageURLs! {
+            for urlString in self.imageURLs! {
                 let view = UIImageView()
                 
                 weak var weakView = view
                 
-                view.sd_setImageWithURL(NSURL(string: url), placeholderImage: UIImage(named: "share_photo_placeholder"), options: self.cacheOptions, completed: { (img: UIImage!, error: NSError!, cacheType: SDImageCacheType, url: NSURL!) -> Void in
+                var url: NSURL
+                if urlString.isLocalPath() {
+                    url = NSURL(fileURLWithPath: urlString)
+                } else {
+                    url = NSURL(string: urlString)!
+                }
+                
+                view.sd_setImageWithURL(url, placeholderImage: UIImage(named: "share_photo_placeholder"), options: self.cacheOptions, completed: { (img: UIImage!, error: NSError!, cacheType: SDImageCacheType, url: NSURL!) -> Void in
                     
                     if img != nil {
                         weakView?.frame = CGRectMake(0, 0, self.scrollView.width, self.scrollView.width * img.size.height / img.size.width)
@@ -234,6 +241,9 @@ class KMPhotoBrowserViewController: UIViewController {
     
     func deletePicture() {
         
+        guard self.images != nil else {
+            return
+        }
         if let option = self.rightNavigationItemOption {
             option.action(self)
             
@@ -256,6 +266,9 @@ class KMPhotoBrowserViewController: UIViewController {
     
     func back() {
         
+        if self.clickForBack {
+            self.modalTransitionStyle = .CrossDissolve
+        }
         self.callBack?(images: self.images!, isModified: self.isModified)
         self.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -284,12 +297,24 @@ extension KMPhotoBrowserViewController: UIScrollViewDelegate {
     
     func scrollViewDidZoom(scrollView: UIScrollView) {
         
-        
+        if let view = scrollView.viewWithTag(100 + self.currentIndex) {
+            
+            var offsetX = (scrollView.bounds.size.width - scrollView.contentSize.width) * 0.5
+            offsetX = offsetX > 0 ? offsetX : 0
+            
+            var offsetY = (scrollView.bounds.size.height - scrollView.contentSize.height) * 0.5
+            offsetY = offsetY > 0 ? offsetY : 0
+            
+            view.center = CGPointMake(offsetX + scrollView.contentSize.width * 0.5, offsetY + scrollView.contentSize.height * 0.5)
+        }
     }
     
     func scrollViewDidEndZooming(scrollView: UIScrollView, withView view: UIView?, atScale scale: CGFloat) {
         
-        
+//        if scrollView.zoomScale <= 1 {
+//            let view = scrollView.viewWithTag(100 + self.currentIndex)
+//            view?.center = CGRectGetCenter(scrollView.bounds)
+//        }
     }
     
     func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
