@@ -191,7 +191,8 @@
 				A7CB3AFD1C1E80960046E1AB /* UIViewExt.m */,
 				A7CB3B011C1E94870046E1AB /* KMPhotoBrowserAssets.xcassets */,
 			);
-			path = KMPhotoBrowser;
+			name = KMPhotoBrowser;
+			path = ../KMPhotoBrowser;
 			sourceTree = "<group>";
 		};
 		A7CB3B031C1EA7E60046E1AB /* DemoImages */ = {

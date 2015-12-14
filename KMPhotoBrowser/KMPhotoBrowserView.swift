@@ -16,7 +16,7 @@ enum KMPhotoBrowserViewType {
 
 @objc protocol KMPhotoBrowserViewDelegate {
     
-    optional func imageBroswerView(view: KMPhotoBrowserView, clickImageAtIndex index: Int) -> Void
+    optional func photoBroswerView(view: KMPhotoBrowserView, clickImageAtIndex index: Int) -> Void
 }
 
 class KMPhotoBrowserView: UIView {
@@ -31,6 +31,8 @@ class KMPhotoBrowserView: UIView {
     
     var gapWidth: CGFloat = 10
     weak var delegate: protocol<KMPhotoBrowserViewDelegate>?
+    
+    var cacheOptions: SDWebImageOptions = .CacheMemoryOnly
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -89,7 +91,7 @@ class KMPhotoBrowserView: UIView {
                     } else {
                         url = NSURL(string: urlString)!
                     }
-                    button.setImageWithURL(url, forState: .Normal, placeholderImage: UIImage(named: "share_photo_placeholder"))
+                    button.sd_setImageWithURL(url, forState: .Normal, placeholderImage: UIImage(named: "share_photo_placeholder"), options: self.cacheOptions)
                 }
                 self.height = yPoint + imageWidth
             }
@@ -109,14 +111,22 @@ class KMPhotoBrowserView: UIView {
                 } else {
                     url = NSURL(string: imageURLs.first!)!
                 }
-                button.setImageWithURL(url, forState: .Normal, placeholderImage: UIImage(named: "share_cover_placeholder"), completed: { (image, error, cacheType) -> Void in
-                    if image != nil {
-                        let ratio = imageHeight / image.size.height
-                        let imageWidth = image.size.width * ratio < self.width ? image.size.width * ratio : self.width
-                        
-                        button.width = imageWidth
-                    }
+
+                button.sd_setImageWithURL(
+                    url,
+                    forState: .Normal,
+                    placeholderImage: UIImage(named: "share_cover_placeholder"),
+                    options: self.cacheOptions,
+                    completed: { (image: UIImage!, error: NSError!, cacheType: SDImageCacheType, url: NSURL!) -> Void in
+                    
+                        if image != nil {
+                            let ratio = imageHeight / image.size.height
+                            let imageWidth = image.size.width * ratio < self.width ? image.size.width * ratio : self.width
+                            
+                            button.width = imageWidth
+                        }
                 })
+                
                 button.clipsToBounds = true
                 
                 self.height = imageHeight
@@ -212,6 +222,6 @@ class KMPhotoBrowserView: UIView {
     
     func clickImageButton(button: UIButton) -> Void {
         
-        self.delegate?.imageBroswerView?(self, clickImageAtIndex: button.tag)
+        self.delegate?.photoBroswerView?(self, clickImageAtIndex: button.tag)
     }
 }
