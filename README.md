@@ -81,7 +81,7 @@ In objc, using `rightNavigationItemOption_oc(NSDictionary)` instead. The key is 
 
 ### Contact
 
-You can open an issue when find bugs.
+You can open an issue when finding bugs.
 
 # Licence
 KMPhotoBrowser is under the MIT Licence, see the LICENCE file for details.
